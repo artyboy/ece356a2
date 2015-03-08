@@ -12,6 +12,10 @@
         <title>JSP Page</title>
     </head>
     <body>
-        <h1>Hello World!</h1>
+        <ul>
+            <li><a href="user_data_form.jsp">
+                    Exercise 2: Enter, save and display data</a></li>
+                    <li><a href="DBTestServlet">Exercise 3: Connect to database</a></li>
+        </ul>
     </body>
 </html>
