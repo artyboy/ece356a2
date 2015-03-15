@@ -5,28 +5,12 @@
         <servlet-class>ece356.UserDataServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>UserData</servlet-name>
-        <servlet-class>ece356.UserData</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>Doctor</servlet-name>
-        <servlet-class>ece356.Doctor</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>QueryServlet</servlet-name>
-        <servlet-class>QueryServlet</servlet-class>
+        <servlet-class>ece356.QueryServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>UserDataServlet</servlet-name>
         <url-pattern>/UserDataServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>UserData</servlet-name>
-        <url-pattern>/UserData</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>Doctor</servlet-name>
-        <url-pattern>/Doctor</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>QueryServlet</servlet-name>

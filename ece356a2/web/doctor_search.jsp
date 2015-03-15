@@ -13,9 +13,9 @@
     </head>
     <body>
         <h1>Doctor Search</h1>
-        <form action="QueryServlet?qnum=0" method="POST">
+        <form action="QueryServlet?qnum=1" method="POST">
             Doctor Name <input type="text"
-                                      name="doctorname" value="" /><br>
+                                      name="doctorName" value="" /><br>
             Gender <input type="text"
                                       name="gender" value="" /><br>
             Work Address<br>
@@ -29,15 +29,15 @@
                                       name="country" value="" /><br>
             <!--need postal code validation-->
             Postal Code <input type="text"
-                                      name="postalcode" value="" /><br>
+                                      name="postalCode" value="" /><br>
             Specialization <input type="text"
                                       name="specialization" value="" /><br>
             Licensed for greater than <input type="text"
-                                      name="yearslicensed" value="" /> Years<br>
+                                      name="yearsLicensed" value="" /> Years<br>
             Average Star Rating greater than <input type="number"
-                                      name="avgstarrating" value="" /> out of 5<br>
+                                      name="avgStarRating" value="" step="0.5"/> out of 5<br>
             Reviewed by friends <input type="checkbox"
-                                      name="reviewedbyfriend" value="" /><br>
+                                      name="reviewedByFriend" value="checked" /><br>
             Comment keywords <input type="text"
                                       name="keywords" value="" /><br>
             <input type="submit" value="Submit Query" />

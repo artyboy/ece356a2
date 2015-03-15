@@ -97,17 +97,36 @@ public class QueryServlet extends HttpServlet {
                 throw new RuntimeException("Employee ID out of range");
             }
         }*/
-        String doctorName = request.getParameter("doctorname");
-        String empName = request.getParameter("empName");
-        String strDeptID = request.getParameter("deptID");
-        int deptID = -1;
-        if (!strDeptID.equals("")) {
-            deptID = Integer.parseInt(strDeptID);
-            if (deptID <= 0) {
-                throw new RuntimeException("Department ID out of range");
+        String doctorName = request.getParameter("doctorName");
+        String gender = request.getParameter("gender");
+        String street = request.getParameter("street");
+        String city = request.getParameter("city");
+        String province = request.getParameter("province");
+        String country = request.getParameter("country");
+        String postalCode = request.getParameter("postalCode");
+        String specialization = request.getParameter("specialization");
+        String strYearsLicensed = request.getParameter("yearsLicensed");
+        int yearsLicensed = -1;
+        if (!strYearsLicensed.equals("")) {
+            yearsLicensed = Integer.parseInt(strYearsLicensed);
+            if (yearsLicensed < 0) {
+                yearsLicensed = 0;
             }
         }
-        String job = request.getParameter("job");
+        String strAvgStarRating = request.getParameter("avgStarRating");
+        double avgStarRating = -1.0;
+        if (!strAvgStarRating.equals("")) {
+            avgStarRating = Double.parseDouble(strAvgStarRating);
+            if (yearsLicensed < 0.0) {
+                avgStarRating = 0.0;
+            }
+        }
+        String comments = request.getParameter("keywords");
+        Boolean reviewedByFriend = false;
+        if(request.getParameter("reviewedByFriend") != null){
+            reviewedByFriend = true;
+        }
+        /*
         String strSalary = request.getParameter("salary");
         int salary = -1;
         if (!strSalary.equals("")) {
@@ -115,10 +134,12 @@ public class QueryServlet extends HttpServlet {
             if (salary <= 0) {
                 throw new RuntimeException("Salary out of range");
             }
-        }
+        }*/
 
-        ArrayList ret = Lab3DBAO.queryEmployee(empID, empName, deptID, job, salary);
-        request.setAttribute("employeeList", ret);
+        ArrayList ret = Lab3DBAO.queryDoctor(doctorName, gender, street, city, 
+                province, country, postalCode, specialization, yearsLicensed, 
+                avgStarRating,comments, reviewedByFriend);
+        request.setAttribute("doctorList", ret);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

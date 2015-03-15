@@ -20,10 +20,11 @@ public class Doctor {
     private String postalCode;
     private String[] specializations;
     private int yearsLicensed;
-    private int averageStarRating;
+    private double averageStarRating;
+    private int numOfReviews;
 
     public Doctor(String doctorAlias, String doctorName, String gender, 
-            String Street, String street, String city, String province,
+            String street, String city, String province,
             String country, String postalCode, String[] specializations,
             int yearsLicensed, int averageStarRating) {
         this.doctorAlias = doctorAlias;
@@ -37,6 +38,21 @@ public class Doctor {
         this.specializations = specializations;
         this.yearsLicensed = yearsLicensed;
         this.averageStarRating = averageStarRating;
+    }
+
+    public Doctor(String doctorName, String gender) {
+        this.doctorName = doctorName;
+        this.gender = gender;
+    }
+    public Doctor(String doctorName, String gender, double averageStarRating, int numOfReviews) {
+        this.doctorName = doctorName;
+        this.gender = gender;
+        this.averageStarRating = averageStarRating;
+        this.numOfReviews = numOfReviews;
+    }
+
+    public int getNumOfReviews() {
+        return numOfReviews;
     }
 
     public String getDoctorAlias() {
@@ -79,7 +95,7 @@ public class Doctor {
         return yearsLicensed;
     }
 
-    public int getAverageStarRating() {
+    public double getAverageStarRating() {
         return averageStarRating;
     }
 
@@ -122,5 +138,14 @@ public class Doctor {
     public void setYearsLicensed(int yearsLicensed) {
         this.yearsLicensed = yearsLicensed;
     }
+
+    public void setAverageStarRating(double averageStarRating) {
+        this.averageStarRating = averageStarRating;
+    }
+
+    public void setNumOfReviews(int numOfReviews) {
+        this.numOfReviews = numOfReviews;
+    }
+    
 
 }
