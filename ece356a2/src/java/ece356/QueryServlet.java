@@ -7,10 +7,12 @@ package ece356;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -37,66 +39,45 @@ public class QueryServlet extends HttpServlet {
         try {
             if (intQueryNum == 1) {
                 querydoctorhelper(request, response);
+                url = "/success.jsp";
             } 
-            /*else if (intQueryNum == 2) {
-                ArrayList ret = Lab3DBAO.getDepartments();
-                request.setAttribute("departmentList", ret);
-            } else if (intQueryNum == 3) {
-                query3helper(request, response);
-            } */
+            else if(intQueryNum == 2){
+                viewprofilehelper(request, response);
+                url = "/view_profile.jsp";
+            }
+            else if(intQueryNum == 3){
+                String doctorAlias = request.getParameter("docAlias");
+                request.setAttribute("docAlias", doctorAlias);
+                url = "/write_review.jsp";
+            }
+            else if(intQueryNum == 4){
+                writereviewhelper(request,response);
+                viewprofilehelper(request,response);
+                url = "/view_profile.jsp";
+            }
+            else if(intQueryNum == 5){
+                viewreviewhelper(request,response);
+                url = "/view_review.jsp";
+            }
+            else if(intQueryNum == 6){
+                viewnextreviewhelper(request,response, true);
+                url = "/view_review.jsp";
+            }
+            else if(intQueryNum == 7){
+                viewnextreviewhelper(request,response,false);
+                url = "/view_review.jsp";
+            }
             else {
                 throw new RuntimeException("Invalid query number: " + intQueryNum);
             }
-            url = "/success.jsp";
         } catch (Exception e) {
             request.setAttribute("exception", e);
             url = "/fancyError.jsp";
         }
         getServletContext().getRequestDispatcher(url).forward(request, response);
     }
-
-    protected void query3helper(HttpServletRequest request, HttpServletResponse response)
-            throws java.sql.SQLException, ClassNotFoundException {
-        String strEmpID = request.getParameter("empID");
-        int empID = -1;
-        if (!strEmpID.equals("")) {
-            empID = Integer.parseInt(strEmpID);
-            if (empID <= 0) {
-                throw new RuntimeException("Employee ID out of range");
-            }
-        }
-        String empName = request.getParameter("empName");
-        String strDeptID = request.getParameter("deptID");
-        int deptID = -1;
-        if (!strDeptID.equals("")) {
-            deptID = Integer.parseInt(strDeptID);
-            if (deptID <= 0) {
-                throw new RuntimeException("Department ID out of range");
-            }
-        }
-        String job = request.getParameter("job");
-        String strSalary = request.getParameter("salary");
-        int salary = -1;
-        if (!strSalary.equals("")) {
-            salary = Integer.parseInt(strSalary);
-            if (salary <= 0) {
-                throw new RuntimeException("Salary out of range");
-            }
-        }
-
-        ArrayList ret = Lab3DBAO.queryEmployee(empID, empName, deptID, job, salary);
-        request.setAttribute("employeeList", ret);
-    }
     protected void querydoctorhelper(HttpServletRequest request, HttpServletResponse response)
-            throws java.sql.SQLException, ClassNotFoundException {
-        /*String strEmpID = request.getParameter("empID");
-        int empID = -1;
-        if (!strEmpID.equals("")) {
-            empID = Integer.parseInt(strEmpID);
-            if (empID <= 0) {
-                throw new RuntimeException("Employee ID out of range");
-            }
-        }*/
+            throws java.sql.SQLException, ClassNotFoundException, NamingException {
         String doctorName = request.getParameter("doctorName");
         String gender = request.getParameter("gender");
         String street = request.getParameter("street");
@@ -117,7 +98,7 @@ public class QueryServlet extends HttpServlet {
         double avgStarRating = -1.0;
         if (!strAvgStarRating.equals("")) {
             avgStarRating = Double.parseDouble(strAvgStarRating);
-            if (yearsLicensed < 0.0) {
+            if (avgStarRating < 0.0) {
                 avgStarRating = 0.0;
             }
         }
@@ -126,20 +107,72 @@ public class QueryServlet extends HttpServlet {
         if(request.getParameter("reviewedByFriend") != null){
             reviewedByFriend = true;
         }
-        /*
-        String strSalary = request.getParameter("salary");
-        int salary = -1;
-        if (!strSalary.equals("")) {
-            salary = Integer.parseInt(strSalary);
-            if (salary <= 0) {
-                throw new RuntimeException("Salary out of range");
-            }
-        }*/
 
         ArrayList ret = Lab3DBAO.queryDoctor(doctorName, gender, street, city, 
                 province, country, postalCode, specialization, yearsLicensed, 
                 avgStarRating,comments, reviewedByFriend);
         request.setAttribute("doctorList", ret);
+    }
+    protected void viewprofilehelper(HttpServletRequest request, HttpServletResponse response)
+            throws java.sql.SQLException, ClassNotFoundException, NamingException {
+        HttpSession session = request.getSession(false);
+        //String doctorAlias = (String)session.getAttribute("docAlias");
+        String doctorAlias = (String)request.getParameter("docAlias");
+        Doctor doc = Lab3DBAO.viewDoctorProfile(doctorAlias);
+        request.setAttribute("doctor", doc);
+        
+        ArrayList addresses = Lab3DBAO.getAddresses(doctorAlias);
+        request.setAttribute("addressList", addresses);
+        
+        ArrayList specializations = Lab3DBAO.getSpecs(doctorAlias);
+        request.setAttribute("specList", specializations);
+        
+        ArrayList reviews = Lab3DBAO.getReviews(doctorAlias);
+        request.setAttribute("reviewList", reviews);
+    }
+    protected void viewreviewhelper(HttpServletRequest request, HttpServletResponse response)
+            throws java.sql.SQLException, ClassNotFoundException, NamingException {
+        String doctorAlias = request.getParameter("docAlias");
+        String strRevID = request.getParameter("revID");
+        int revID = -1;
+        if (!strRevID.equals("")) {
+            revID = Integer.parseInt(strRevID);
+        }
+        request.setAttribute("doc",doctorAlias);
+        Review review = Lab3DBAO.readReview(revID);
+        request.setAttribute("review", review);
+    }
+    protected void viewnextreviewhelper(HttpServletRequest request, HttpServletResponse response, Boolean next)
+            throws java.sql.SQLException, ClassNotFoundException, NamingException {
+        String doctorAlias = request.getParameter("docAlias");
+        String strRevID = request.getParameter("revID");
+        int revID = -1;
+        if (!strRevID.equals("")) {
+            revID = Integer.parseInt(strRevID);
+        }
+        request.setAttribute("doc",doctorAlias);
+        if(next){
+            revID = Lab3DBAO.getPrevReview(doctorAlias, revID);
+        }else{
+            revID = Lab3DBAO.getNextReview(doctorAlias, revID);
+        }
+        Review review = Lab3DBAO.readReview(revID);
+        request.setAttribute("review", review);
+    }
+    protected void writereviewhelper(HttpServletRequest request, HttpServletResponse response)
+            throws java.sql.SQLException, ClassNotFoundException, NamingException {
+        String doctorAlias = request.getParameter("docAlias");
+        String strStarRating = request.getParameter("rating");
+        int rating = -1;
+        if (!strStarRating.equals("")) {
+            rating = Integer.parseInt(strStarRating);
+            if (rating < 0) {
+                rating = 0;
+            }
+        }
+        String comments = request.getParameter("keywords");
+
+        Lab3DBAO.writeReview(doctorAlias, rating, comments);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

@@ -2,7 +2,11 @@ package ece356;
 
 import java.sql.*;
 import java.util.ArrayList;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
+import javax.sql.DataSource;
 
 /**
  *
@@ -33,14 +37,14 @@ public class Lab3DBAO {
 public class Lab3DBAO {
 
     //public static final String host = "localhost";
-    public static final String host = "eceweb.uwaterloo.ca";
-    public static final String url = "jdbc:mysql://eceweb.uwaterloo.ca:3306/";// + host + ":3306/";
-    public static final String nid = "nhleung";
-    public static final String user = "user_" + nid;
-    public static final String pwd = "artemis93db356";//"user_" + nid;
+    //public static final String host = "eceweb.uwaterloo.ca";
+    //public static final String url = "jdbc:mysql://eceweb.uwaterloo.ca:3306/";// + host + ":3306/";
+    //public static final String nid = "nhleung";
+    //public static final String user = "user_" + nid;
+    //public static final String pwd = "artemis93db356";//"user_" + nid;
 
     public static void testConnection()
-            throws ClassNotFoundException, SQLException {
+            throws ClassNotFoundException, SQLException, NamingException {
         Connection con = null;
         try {
             con = getConnection();
@@ -53,9 +57,19 @@ public class Lab3DBAO {
 
 
     public static Connection getConnection()
-            throws ClassNotFoundException, SQLException {
+            throws ClassNotFoundException, SQLException, NamingException {
         Class.forName("com.mysql.jdbc.Driver");
-        Connection con = DriverManager.getConnection(url, user, pwd);
+        InitialContext cxt = new InitialContext();
+        if (cxt == null) {
+        throw new RuntimeException("Unable to create naming context!");
+        }
+        Context dbContext = (Context) cxt.lookup("java:comp/env");
+        DataSource ds = (DataSource) dbContext.lookup("jdbc/myDatasource");
+        if (ds == null) {
+        throw new RuntimeException("Data source not found!");
+        }
+        Connection con = ds.getConnection();
+        //Connection con = DriverManager.getConnection(url, user, pwd);
         Statement stmt = null;
         try {
             con.createStatement();
@@ -69,140 +83,11 @@ public class Lab3DBAO {
         return con;
     }
 
-    public static ArrayList<Employee> getEmployees()
-            throws ClassNotFoundException, SQLException {
-        Connection con = null;
-        Statement stmt = null;
-        ArrayList<Employee> ret = null;
-        try {
-            con = getConnection();
-            stmt = con.createStatement();
-            ResultSet resultSet = stmt.executeQuery("SELECT * FROM Employee");
-            ret = new ArrayList<Employee>();
-            while (resultSet.next()) {
-                Employee e = new Employee(
-                        resultSet.getInt("empID"),
-                        resultSet.getString("empName"),
-                        resultSet.getString("job"),
-                        resultSet.getInt("deptID"),
-                        resultSet.getInt("salary"));
-                ret.add(e);
-            }
-            return ret;
-        } finally {
-            if (stmt != null) {
-                stmt.close();
-            }
-            if (con != null) {
-                con.close();
-            }
-        }
-    }
-
-    public static ArrayList getDepartments()
-            throws ClassNotFoundException, SQLException {
-        {
-            Connection con = null;
-            Statement stmt = null;
-            ArrayList ret = null;
-            try {
-                con = getConnection();
-                stmt = con.createStatement();
-                ResultSet resultSet = stmt.executeQuery("SELECT * FROM Department");
-                ret = new ArrayList<Employee>();
-                while (resultSet.next()) {
-                    Department d = new Department(
-                            resultSet.getInt("Department.deptID"),
-                            resultSet.getString("Department.deptName"),
-                            resultSet.getString("Department.location"));
-                    ret.add(d);
-                }
-                return ret;
-            } finally {
-                if (stmt != null) {
-                    stmt.close();
-                }
-                if (con != null) {
-                    con.close();
-                }
-            }
-        }
-    }
-
-    public static ArrayList<Employee> queryEmployee(int empID, String empName, int deptID, String job, int salary)
-            throws ClassNotFoundException, SQLException {
-        Connection con = null;
-        PreparedStatement pstmt = null;
-        ArrayList<Employee> ret;
-
-        try {
-            con = getConnection();
-
-            /* Build SQL query */
-            String query = "SELECT * FROM Employee WHERE TRUE";
-            if (empID != -1) {
-                query += " AND empID = ?";
-            }
-            if (empName.length() != 0) {
-                query += " AND empName = ?";
-            }
-            if (deptID != -1) {
-                query += " AND deptID = ?";
-            }
-            if (job.length() != 0) {
-                query += " AND job = ?";
-            }
-            if (salary != -1) {
-                query += " AND salary = ?";
-            }
-
-            pstmt = con.prepareStatement(query);
-
-            int num = 0;
-            if (empID != -1) {
-                pstmt.setInt(++num, empID);
-            }
-            if (empName.length() != 0) {
-                pstmt.setString(++num, empName);
-            }
-            if (deptID != -1) {
-                pstmt.setInt(++num, deptID);
-            }
-            if (job.length() != 0) {
-                pstmt.setString(++num, job);
-            }
-            if (salary != -1) {
-                pstmt.setInt(++num, salary);
-            }
-
-            ResultSet resultSet;
-            resultSet = pstmt.executeQuery();
-
-            ret = new ArrayList<Employee>();
-            while (resultSet.next()) {
-                Employee e = new Employee(
-                        resultSet.getInt("empID"),
-                        resultSet.getString("empName"),
-                        resultSet.getString("job"),
-                        resultSet.getInt("deptID"),
-                        resultSet.getInt("salary"));
-                ret.add(e);
-            }
-            return ret;
-        } finally {
-            if (pstmt != null) {
-                pstmt.close();
-            }
-            if (con != null) {
-                con.close();
-            }
-        }
-    }
     public static ArrayList<Doctor> queryDoctor(String doctorName, String gender,
             String street,String city, String province, String country, 
             String postalCode,String specialization, int yearsLicensed,
             double avgStarRating, String comments, Boolean reviewedByFriend)
-            throws ClassNotFoundException, SQLException {
+            throws ClassNotFoundException, SQLException, NamingException {
         Connection con = null;
         PreparedStatement pstmt = null;
         ArrayList<Doctor> ret;
@@ -251,32 +136,37 @@ public class Lab3DBAO {
             if(yearsLicensed != -1){
                 query+= " AND years_licensed >= ?";
             }
-//            if(query.endsWith("WHERE ")){
-//                query = query.substring(0, query.lastIndexOf("WHERE"));
-//            }
             query+=" GROUP BY Doctor.doc_alias";
             query+=") as DocAdrSpec on Ratings.doc_alias=DocAdrSpec.doc_alias)"
-                    + "as DocRatings";
+                    + "as DocRatings ";
             
 
             
-            if(comments.length() != 0){
-                query+=" natural join (select Doctor.doc_alias from Doctor natural join Review " +
-                    "where Doctor.doc_alias=Review.doc_alias ";
+            if(comments.length() != 0 || reviewedByFriend){
+                query+=" natural join (select Doctor.doc_alias from Doctor "
+                        + "natural join Review where TRUE";
             }
-                    if(reviewedByFriend){
-                query+="and Review.pat_alias in(" +
-                        "select pat_alias from Patient " +
-                        "where pat_alias=(" +
-                        "select pat_alias1 from Friend where pat_alias2=? " +
-                        "and pat_alias1 in " +
-                        "(select pat_alias2 from Friend where pat_alias1=?)" +
-                        ")" +
-                        ")";
-                    }
             if(comments.length() != 0){
-                query+="and comments like ? " +
-                    "group by Doctor.doc_alias) as Friend; ";
+                 query+=" and Doctor.doc_alias=Review.doc_alias ";
+            }
+            if(reviewedByFriend){
+                query+=" and Review.pat_alias in(" +
+                "select pat_alias from Patients " +
+                "where pat_alias=(" +
+                "select pat_alias1 from Friend where pat_alias2=? " +
+                "and pat_alias1 in " +
+                "(select pat_alias2 from Friend where pat_alias1=?)" +
+                ")" +
+                ")";
+            }
+            if(comments.length() != 0){
+                query+="and comments like ? ";
+            }
+            if(comments.length() != 0 || reviewedByFriend){
+                query+="group by Doctor.doc_alias) as Friend ";
+            }
+            if(avgStarRating != -1.0){
+                query+=" WHERE DocRatings.avg_star_rating >= ?";
             }
             pstmt = con.prepareStatement(query);
 
@@ -309,8 +199,16 @@ public class Lab3DBAO {
             if (yearsLicensed!= -1) {
                 pstmt.setInt(++num, yearsLicensed);
             }
+            //need to change for testing
+            if(reviewedByFriend){
+                pstmt.setString(++num, "pat_nathan");
+                pstmt.setString(++num, "pat_nathan");
+            }
             if (comments.length() != 0) {
                 pstmt.setString(++num, "%"+comments+"%");
+            }
+            if (avgStarRating != -1.0) {
+                pstmt.setDouble(++num, avgStarRating);
             }
             ResultSet resultSet;
             resultSet = pstmt.executeQuery();
@@ -318,6 +216,7 @@ public class Lab3DBAO {
             ret = new ArrayList<Doctor>();
             while (resultSet.next()) {
                 Doctor d = new Doctor(
+                        resultSet.getString("doc_alias"),
                         resultSet.getString("name"),
                         resultSet.getString("gender"),
                         resultSet.getDouble("avg_star_rating"),
@@ -334,23 +233,310 @@ public class Lab3DBAO {
             }
         }
     }
+    
+    public static Doctor viewDoctorProfile(String doctorAlias)
+            throws ClassNotFoundException, SQLException, NamingException {
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        Doctor ret;
 
-    public static void addEmployee(Employee em)
-            throws ClassNotFoundException, SQLException {
+        try {
+            con = getConnection();
+
+            /* Build SQL query */
+            String query ="select DocAlias.doc_alias,DocAlias.name," +
+            "DocAlias.gender,DocAlias.years_licensed,Ratings.avg_star_rating,"
+                    + "Ratings.num_of_reviews from " +
+            "(select doc_alias, avg(rating) as avg_star_rating," +
+            "count(rating) as num_of_reviews " +
+            "from Doctor natural join Review " +
+            "where Doctor.doc_alias=Review.doc_alias and doc_alias=?"
+                    + "group by Doctor.doc_alias) as Ratings";
+            query+=" right join (select doc_alias,name,gender,years_licensed from Doctor "
+                    + "WHERE doc_alias=?) as DocAlias "
+                    + "on Ratings.doc_alias=DocAlias.doc_alias";
+            pstmt = con.prepareStatement(query);
+            int num = 0;
+            if (doctorAlias.length() != 0) {
+                pstmt.setString(++num, doctorAlias);
+                pstmt.setString(++num, doctorAlias);
+            }
+            ResultSet resultSet;
+            resultSet = pstmt.executeQuery();
+            ret = new Doctor();
+            while (resultSet.next()) {
+                Doctor d = new Doctor(
+                        resultSet.getString("doc_alias"),
+                        resultSet.getString("name"),
+                        resultSet.getString("gender"),
+                        resultSet.getDouble("avg_star_rating"),
+                        resultSet.getInt("num_of_reviews"),
+                        resultSet.getInt("years_licensed"));
+                ret = d;
+            }
+            return ret;
+        } finally {
+            if (pstmt != null) {
+                pstmt.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        }
+    }
+     public static ArrayList<Address> getAddresses(String doctorAlias)
+            throws ClassNotFoundException, SQLException, NamingException {
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ArrayList<Address> ret;
+
+        try {
+            con = getConnection();
+
+            /* Build SQL query */
+            String query = "select street,city,province,postal_code,country "
+                    + "from DoctorAddress " +
+                "where doc_alias=?;";
+            pstmt = con.prepareStatement(query);
+            int num = 0;
+            if (doctorAlias.length() != 0) {
+                pstmt.setString(++num, doctorAlias);
+            }
+            ResultSet resultSet;
+            resultSet = pstmt.executeQuery();
+            ret = new ArrayList<Address>();
+            while (resultSet.next()) {
+                Address a = new Address(
+                        resultSet.getString("street"),
+                        resultSet.getString("city"),
+                        resultSet.getString("province"),
+                        resultSet.getString("country"),
+                        resultSet.getString("postal_code"));
+                ret.add(a);
+            }
+            return ret;
+        } finally {
+            if (pstmt != null) {
+                pstmt.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        }
+    }
+     public static ArrayList<Specialization> getSpecs(String doctorAlias)
+            throws ClassNotFoundException, SQLException, NamingException {
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ArrayList<Specialization> ret;
+
+        try {
+            con = getConnection();
+
+            /* Build SQL query */
+            String query = "select specialization from DoctorSpecialization\n" +
+                "where doc_alias=?";
+            pstmt = con.prepareStatement(query);
+            int num = 0;
+            if (doctorAlias.length() != 0) {
+                pstmt.setString(++num, doctorAlias);
+            }
+            ResultSet resultSet;
+            resultSet = pstmt.executeQuery();
+            ret = new ArrayList<Specialization>();
+            while (resultSet.next()) {
+                Specialization s = new Specialization(
+                        resultSet.getString("specialization"));
+                ret.add(s);
+            }
+            return ret;
+        } finally {
+            if (pstmt != null) {
+                pstmt.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        }
+    }
+     public static ArrayList<Review> getReviews(String doctorAlias)
+            throws ClassNotFoundException, SQLException, NamingException {
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ArrayList<Review> ret;
+
+        try {
+            con = getConnection();
+
+            /* Build SQL query */
+            String query = "select * from Review " +
+                "where doc_alias=?" +
+                "order by date desc;";
+            pstmt = con.prepareStatement(query);
+            int num = 0;
+            if (doctorAlias.length() != 0) {
+                pstmt.setString(++num, doctorAlias);
+            }
+            ResultSet resultSet;
+            resultSet = pstmt.executeQuery();
+            ret = new ArrayList<Review>();
+            while (resultSet.next()) {
+                Review r = new Review(
+                        resultSet.getInt("rev_id"),
+                        resultSet.getString("date"),
+                        resultSet.getInt("rating"),
+                        resultSet.getString("comments")
+                );
+                ret.add(r);
+            }
+            return ret;
+        } finally {
+            if (pstmt != null) {
+                pstmt.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        }
+    }
+     public static Review readReview(int revID)
+            throws ClassNotFoundException, SQLException, NamingException {
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        Review ret;
+
+        try {
+            con = getConnection();
+
+            /* Build SQL query */
+            String query = "select * from Review " +
+                "where rev_id=?";
+            pstmt = con.prepareStatement(query);
+            int num = 0;
+            if (revID != -1) {
+                pstmt.setInt(++num, revID);
+            }
+            ResultSet resultSet;
+            resultSet = pstmt.executeQuery();
+            ret = new Review();
+            while (resultSet.next()) {
+                ret = new Review(
+                        resultSet.getInt("rev_id"),
+                        resultSet.getString("date"),
+                        resultSet.getInt("rating"),
+                        resultSet.getString("comments")
+                );
+            }
+            return ret;
+        } finally {
+            if (pstmt != null) {
+                pstmt.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        }
+    }
+     public static int getNextReview(String docAlias, int revID)
+            throws ClassNotFoundException, SQLException, NamingException {
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        Review ret;
+
+        try {
+            con = getConnection();
+
+            /* Build SQL query */
+            String query = "select rev_id from Review " +
+                "where doc_alias=? and rev_id > ?" +
+                " order by date;";
+            pstmt = con.prepareStatement(query);
+            int num = 0;
+            if (docAlias.length() != 0) {
+                pstmt.setString(++num, docAlias);
+            }
+            if (revID != -1) {
+                pstmt.setInt(++num, revID);
+            }
+            ResultSet resultSet;
+            resultSet = pstmt.executeQuery();
+            if(resultSet.first()){
+                return resultSet.getInt("rev_id");
+            }
+            else{
+                return revID;
+            }
+        } finally {
+            if (pstmt != null) {
+                pstmt.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        }
+    }
+     public static int getPrevReview(String docAlias, int revID)
+            throws ClassNotFoundException, SQLException, NamingException {
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        Review ret;
+
+        try {
+            con = getConnection();
+
+            /* Build SQL query */
+            String query = "select rev_id from Review " +
+                "where doc_alias=? and rev_id < ?" +
+                " order by date desc;";
+            pstmt = con.prepareStatement(query);
+            int num = 0;
+            if (docAlias.length() != 0) {
+                pstmt.setString(++num, docAlias);
+            }
+            if (revID != -1) {
+                pstmt.setInt(++num, revID);
+            }
+            ResultSet resultSet;
+            resultSet = pstmt.executeQuery();
+            if(resultSet.first()){
+                return resultSet.getInt("rev_id");
+            }
+            else{
+                return revID;
+            }
+        } finally {
+            if (pstmt != null) {
+                pstmt.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        }
+    }
+public static void writeReview(String docAlias, int rating, String comments)
+            throws ClassNotFoundException, SQLException, NamingException {
         {
             Connection con = null;
             PreparedStatement pstmt = null;
             ArrayList ret = null;
             try {
                 con = getConnection();
-                pstmt = con.prepareStatement("INSERT INTO Employee VALUES(?, ?, ?, ?, ?)");
-                pstmt.setInt(1, em.getEmpID());
-                pstmt.setString(2, em.getEmpName());
-                pstmt.setString(3, em.getJob());
-                pstmt.setInt(4, em.getDeptID());
-                pstmt.setInt(5, em.getSalary());
+                //con.setAutoCommit(false);
+                //con.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+                pstmt = con.prepareStatement("INSERT INTO "
+                        + "Review(pat_alias,doc_alias,date,rating,comments) "
+                        + " VALUES(?, ?, CURDATE(), ?, ?)");
+                pstmt.setString(1, "pat_nathan");
+                pstmt.setString(2, docAlias);
+                pstmt.setInt(3, rating);
+                pstmt.setString(4, comments);
                 pstmt.executeUpdate();
-            } finally {
+                //con.commit();
+            } 
+//            catch(SQLException se){
+//                con.rollback();
+//            }
+                finally {
                 if (pstmt != null) {
                     pstmt.close();
                 }
@@ -362,7 +548,7 @@ public class Lab3DBAO {
     }
 
     public static void deleteEmployee(int empID)
-            throws ClassNotFoundException, SQLException {
+            throws ClassNotFoundException, SQLException, NamingException {
         {
             Connection con = null;
             PreparedStatement pstmt = null;

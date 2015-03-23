@@ -13,9 +13,9 @@
     </head>
     <body>
         <ul>
-            <li><a href="user_data_form.jsp">
+<!--            <li><a href="user_data_form.jsp">
                     Exercise 2: Enter, save and display data</a></li>
-                    <li><a href="DBTestServlet">Exercise 3: Connect to database</a></li>
+                    <li><a href="DBTestServlet">Exercise 3: Connect to database</a></li>-->
                     <li>
                         <a href="patient_home.jsp">Patient Home</a>
                     </li>

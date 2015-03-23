@@ -13,42 +13,28 @@ public class Doctor {
     private String doctorName;
     private String gender;
     
-    private String street;
-    private String city;
-    private String province;
-    private String country;
-    private String postalCode;
-    private String[] specializations;
     private int yearsLicensed;
     private double averageStarRating;
     private int numOfReviews;
 
+    public Doctor() {
+    }
     public Doctor(String doctorAlias, String doctorName, String gender, 
-            String street, String city, String province,
-            String country, String postalCode, String[] specializations,
-            int yearsLicensed, int averageStarRating) {
+            double averageStarRating, int numOfReviews) {
         this.doctorAlias = doctorAlias;
-        this.doctorName = doctorName;
-        this.gender = gender;
-        this.street = street;
-        this.city = city;
-        this.province = province;
-        this.country = country;
-        this.postalCode = postalCode;
-        this.specializations = specializations;
-        this.yearsLicensed = yearsLicensed;
-        this.averageStarRating = averageStarRating;
-    }
-
-    public Doctor(String doctorName, String gender) {
-        this.doctorName = doctorName;
-        this.gender = gender;
-    }
-    public Doctor(String doctorName, String gender, double averageStarRating, int numOfReviews) {
         this.doctorName = doctorName;
         this.gender = gender;
         this.averageStarRating = averageStarRating;
         this.numOfReviews = numOfReviews;
+    }
+    public Doctor(String doctorAlias, String doctorName, String gender, 
+            double averageStarRating, int numOfReviews, int yearsLicensed) {
+        this.doctorAlias = doctorAlias;
+        this.doctorName = doctorName;
+        this.gender = gender;
+        this.averageStarRating = averageStarRating;
+        this.numOfReviews = numOfReviews;
+        this.yearsLicensed = yearsLicensed;
     }
 
     public int getNumOfReviews() {
@@ -65,30 +51,6 @@ public class Doctor {
 
     public String getGender() {
         return gender;
-    }
-
-    public String getStreet() {
-        return street;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public String getProvince() {
-        return province;
-    }
-
-    public String getCountry() {
-        return country;
-    }
-
-    public String getPostalCode() {
-        return postalCode;
-    }
-
-    public String[] getSpecializations() {
-        return specializations;
     }
 
     public int getYearsLicensed() {
@@ -109,30 +71,6 @@ public class Doctor {
 
     public void setGender(String gender) {
         this.gender = gender;
-    }
-
-    public void setStreet(String street) {
-        this.street = street;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public void setProvince(String province) {
-        this.province = province;
-    }
-
-    public void setCountry(String country) {
-        this.country = country;
-    }
-
-    public void setPostalCode(String postalCode) {
-        this.postalCode = postalCode;
-    }
-
-    public void setSpecializations(String[] specializations) {
-        this.specializations = specializations;
     }
 
     public void setYearsLicensed(int yearsLicensed) {

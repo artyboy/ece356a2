@@ -1,6 +1,6 @@
 <%-- 
-    Document   : patient_home
-    Created on : 8-Mar-2015, 3:31:27 PM
+    Document   : view_friend_requests
+    Created on : 17-Mar-2015, 10:56:11 AM
     Author     : steal_000
 --%>
 
@@ -12,11 +12,6 @@
         <title>JSP Page</title>
     </head>
     <body>
-        <ul>
-            <li><a href="doctor_search.jsp">Doctor Search</a>
-                    </li>
-            <li><a href="patient_search.jsp">Patient Search</a>
-                    </li>
-        </ul>
+        <h1>Hello World!</h1>
     </body>
 </html>

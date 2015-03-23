@@ -35,12 +35,12 @@
             Licensed for greater than <input type="text"
                                       name="yearsLicensed" value="" /> Years<br>
             Average Star Rating greater than <input type="number"
-                                      name="avgStarRating" value="" step="0.5"/> out of 5<br>
+                                      name="avgStarRating" value="" step="0.5" min="0" max="5"/> out of 5<br>
             Reviewed by friends <input type="checkbox"
                                       name="reviewedByFriend" value="checked" /><br>
             Comment keywords <input type="text"
                                       name="keywords" value="" /><br>
-            <input type="submit" value="Submit Query" />
+            <input type="submit" value="Submit" />
         </form>
     </body>
 </html>

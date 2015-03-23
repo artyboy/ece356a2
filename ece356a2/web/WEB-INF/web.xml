@@ -8,6 +8,18 @@
         <servlet-name>QueryServlet</servlet-name>
         <servlet-class>ece356.QueryServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>FriendRequestServlet</servlet-name>
+        <servlet-class>ece356.FriendRequestServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>HandleFriendStatusServlet</servlet-name>
+        <servlet-class>ece356.HandleFriendStatusServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>PatientSearchServlet</servlet-name>
+        <servlet-class>ece356.PatientSearchServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>UserDataServlet</servlet-name>
         <url-pattern>/UserDataServlet</url-pattern>
@@ -16,9 +28,28 @@
         <servlet-name>QueryServlet</servlet-name>
         <url-pattern>/QueryServlet</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>FriendRequestServlet</servlet-name>
+        <url-pattern>/FriendRequestServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>HandleFriendStatusServlet</servlet-name>
+        <url-pattern>/HandleFriendStatusServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>PatientSearchServlet</servlet-name>
+        <url-pattern>/PatientSearchServlet</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>
             30
         </session-timeout>
     </session-config>
+    <resource-ref>
+ <description>MySQL connection pool</description>
+ <res-ref-name> jdbc/myDatasource </res-ref-name>
+ <res-type>javax.sql.ConnectionPoolDataSource</res-type>
+ <res-auth>Container</res-auth>
+ <res-sharing-scope>Shareable</res-sharing-scope>
+</resource-ref>
 </web-app>
