@@ -53,6 +53,6 @@
         %>
         <p>
         <a href=HandleFriendStatusServlet?action=viewrequest>View Friend Requests</a><br><br>  
-        <a href="index.jsp">return to Search A Patient main page</a>
+        <a href="patient_search.jsp">return to Search A Patient main page</a>
     </body>
 </html>

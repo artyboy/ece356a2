@@ -26,7 +26,7 @@
                     String palias = p.getPatientAlias();
                     out.print(palias);
                     out.print("</td><td>");
-                    out.print("<a href=\"HandleFriendStatusServlet?action=send&palias="+p.getPatientAlias()+"\">Accept/Request</a>");
+                    out.print("<a href=\"HandleFriendStatusServlet?action=send&palias="+p.getPatientAlias()+"\">Accept Request</a>");
                 }
                 out.println("</table>");
             }

@@ -162,10 +162,14 @@ public class PatientDBAO {
         String pat_alias2 = "pat_nathan";
         try {
             con = getConnection();
-            String sendRequestSql = "SELECT * FROM Friend WHERE pat_alias2=?;";
+            String sendRequestSql = "select pat_alias1 from Friend "
+                    + "where pat_alias2=? and pat_alias1 " 
+                    +"not in(select pat_alias2 from "
+                    + "Friend where pat_alias1=?);";
             pStmt = con.prepareStatement(sendRequestSql);
             // Change the session object from Login screen here
             pStmt.setString(1, pat_alias2); 
+            pStmt.setString(2, pat_alias2); 
             ResultSet rs = pStmt.executeQuery();
             ArrayList<Patient> viewRequest = new ArrayList<>();
             while(rs.next()){
