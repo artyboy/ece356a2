@@ -17,6 +17,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -38,14 +39,26 @@ public class HandleFriendStatusServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         String url;
         String action = request.getParameter("action");
+        String requestURL = request.getRequestURL().toString();
         try {
+            
+        HttpSession session = request.getSession(true);
+        String userAlias = ((UserData)session.getAttribute("userData")).getAlias();
             if("viewrequest".equals(action)){
-                ArrayList viewRequest = PatientDBAO.viewRequest(request);
+                ArrayList viewRequest = PatientDBAO.viewRequest(request,userAlias);
                 request.setAttribute("viewRequest", viewRequest);
                 url = "/viewRequestSuccess.jsp";
             }else{
-                PatientDBAO.sendRequest(request);
-                url = "/sendRequestSuccess.jsp";
+                PatientDBAO.sendRequest(request,userAlias);
+//                if(requestURL.contains("PatientSearchServlet")){
+//                    url = "/PatientSearchSuccess.jsp";
+//                }
+//                else if(requestURL.contains("HandleFriendStatusServlet")){
+//                    url = "/viewRequestSuccess.jsp";
+//                }
+//                else{
+                    url = "/sendRequestSuccess.jsp";
+ //               }
             }      
             
         } catch (ClassNotFoundException | SQLException e) {

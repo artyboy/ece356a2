@@ -34,11 +34,12 @@ public class QueryServlet extends HttpServlet {
             throws ServletException, IOException {
         String strQueryNum = request.getParameter("qnum");
         int intQueryNum = Integer.parseInt(strQueryNum);
-
+        HttpSession session = request.getSession(true);
+        String userAlias = ((UserData)session.getAttribute("userData")).getAlias();
         String url;
         try {
             if (intQueryNum == 1) {
-                querydoctorhelper(request, response);
+                querydoctorhelper(request, response,userAlias);
                 url = "/success.jsp";
             } 
             else if(intQueryNum == 2){
@@ -51,7 +52,7 @@ public class QueryServlet extends HttpServlet {
                 url = "/write_review.jsp";
             }
             else if(intQueryNum == 4){
-                writereviewhelper(request,response);
+                writereviewhelper(request,response,userAlias);
                 viewprofilehelper(request,response);
                 url = "/view_profile.jsp";
             }
@@ -76,14 +77,13 @@ public class QueryServlet extends HttpServlet {
         }
         getServletContext().getRequestDispatcher(url).forward(request, response);
     }
-    protected void querydoctorhelper(HttpServletRequest request, HttpServletResponse response)
+    protected void querydoctorhelper(HttpServletRequest request, HttpServletResponse response, String userAlias)
             throws java.sql.SQLException, ClassNotFoundException, NamingException {
         String doctorName = request.getParameter("doctorName");
         String gender = request.getParameter("gender");
         String street = request.getParameter("street");
         String city = request.getParameter("city");
         String province = request.getParameter("province");
-        String country = request.getParameter("country");
         String postalCode = request.getParameter("postalCode");
         String specialization = request.getParameter("specialization");
         String strYearsLicensed = request.getParameter("yearsLicensed");
@@ -108,8 +108,8 @@ public class QueryServlet extends HttpServlet {
             reviewedByFriend = true;
         }
 
-        ArrayList ret = Lab3DBAO.queryDoctor(doctorName, gender, street, city, 
-                province, country, postalCode, specialization, yearsLicensed, 
+        ArrayList ret = Lab3DBAO.queryDoctor(userAlias,doctorName, gender, street, city, 
+                province, postalCode, specialization, yearsLicensed, 
                 avgStarRating,comments, reviewedByFriend);
         request.setAttribute("doctorList", ret);
     }
@@ -159,20 +159,20 @@ public class QueryServlet extends HttpServlet {
         Review review = Lab3DBAO.readReview(revID);
         request.setAttribute("review", review);
     }
-    protected void writereviewhelper(HttpServletRequest request, HttpServletResponse response)
+    protected void writereviewhelper(HttpServletRequest request, HttpServletResponse response, String userAlias)
             throws java.sql.SQLException, ClassNotFoundException, NamingException {
         String doctorAlias = request.getParameter("docAlias");
         String strStarRating = request.getParameter("rating");
-        int rating = -1;
+        double rating = -1.0;
         if (!strStarRating.equals("")) {
-            rating = Integer.parseInt(strStarRating);
-            if (rating < 0) {
-                rating = 0;
+            rating = Double.parseDouble(strStarRating);
+            if (rating < 0.0) {
+                rating = 0.0;
             }
         }
         String comments = request.getParameter("keywords");
 
-        Lab3DBAO.writeReview(doctorAlias, rating, comments);
+        Lab3DBAO.writeReview(userAlias, doctorAlias, rating, comments);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

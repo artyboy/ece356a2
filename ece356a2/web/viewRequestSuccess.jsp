@@ -18,6 +18,7 @@
     <body>
         <%
             if (viewRequestList != null) {
+                if(viewRequestList.size() > 0){
                 out.println("<h1>Friend Requests</h1>");
                 out.println("<table border=1>");
                 out.println("<tr><th>Patient Alias</th><th>Requests</th></tr>");
@@ -29,6 +30,10 @@
                     out.print("<a href=\"HandleFriendStatusServlet?action=send&palias="+p.getPatientAlias()+"\">Accept Request</a>");
                 }
                 out.println("</table>");
+                }
+                else{
+                    out.println("<div>No Results</div>");
+                }
             }
         %>
         <p>   

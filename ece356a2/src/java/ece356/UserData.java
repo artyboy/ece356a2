@@ -2,22 +2,22 @@ package ece356;
 
 public class UserData {
 
-    String userName;
-    String favColour;
+    String alias;
+    String password;
 
-    public String getUserName() {
-        return userName;
+    public String getAlias() {
+        return alias;
     }
 
-    public void setUserName(String value) {
-        userName = value;
+    public void setAlias(String value) {
+        alias = value;
     }
 
-    public void setFavColour(String value) {
-        favColour = value;
+    public void setPassword(String value) {
+        password = value;
     }
 
-    public String getFavColour() {
-        return favColour;
+    public String getPassword() {
+        return password;
     }
 }

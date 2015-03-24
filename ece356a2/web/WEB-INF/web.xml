@@ -5,6 +5,10 @@
         <servlet-class>ece356.UserDataServlet</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>logOutServlet</servlet-name>
+        <servlet-class>ece356.logOutServlet</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>QueryServlet</servlet-name>
         <servlet-class>ece356.QueryServlet</servlet-class>
     </servlet>
@@ -23,6 +27,10 @@
     <servlet-mapping>
         <servlet-name>UserDataServlet</servlet-name>
         <url-pattern>/UserDataServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>logOutServlet</servlet-name>
+        <url-pattern>/logOutServlet</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>QueryServlet</servlet-name>

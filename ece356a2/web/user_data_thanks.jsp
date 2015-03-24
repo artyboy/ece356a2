@@ -9,11 +9,12 @@
 
 <jsp:useBean id="userData" class="ece356.UserData" scope="session"/>
 
-Name: <%= userData.getUserName() %><br/>
-Colour: <%= userData.getFavColour() %><br/>
+GREETING:  Welcome to Sai & Nathan Clinic in Waterloo <%= userData.getAlias() %>!<br/>
+
 
 <p>
-<a href="user_data_thanks2.jsp">Continue</a>
+                        <a href="patient_home.jsp">Patient Home</a>
+<a href="logOutServlet">Log Out</a>
 
 </body>
 </html>

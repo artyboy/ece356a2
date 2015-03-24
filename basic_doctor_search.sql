@@ -13,7 +13,7 @@ CREATE PROCEDURE Test_DoctorSearch(IN gender VARCHAR(20), IN city VARCHAR(20),
 		and Doctor.doc_alias=DoctorSpecialization.doc_alias
 	 	and Doctor.gender=gender and DoctorAddress.city like CONCAT('%',city,'%')
 	 	and DoctorSpecialization.specialization=specialization
-	 	and Doctor.years_licensed>=num_years_licensed
+	 	and (YEAR(CURDATE())-Doctor.license_year)=num_years_licensed
 	 	GROUP BY Doctor.doc_alias) as DoctorSimple;
 END
 $

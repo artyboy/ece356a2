@@ -17,9 +17,10 @@
     <%! ArrayList<Doctor> doctorList;%>
     <% doctorList = (ArrayList<Doctor>) request.getAttribute("doctorList");%>
 
-    <body>
+    <body><a href="logOutServlet">Log Out</a>
         <%
             if (doctorList != null) {
+                if(doctorList.size() > 0){
         %>
         <h1>Doctor Data</h1>
         <table border=1>
@@ -42,11 +43,19 @@
             </tr>
             <%
                 }
+                
             
             %>
         </table>
             <%
                 }
+                else{
+            
+            %>
+            <div>No Results</div>
+            <%
+                }
+            }
             
             %>
         <p>

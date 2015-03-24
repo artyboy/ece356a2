@@ -17,7 +17,7 @@
     <% review = (Review) request.getAttribute("review");%>
     <%! String docAlias;%>
     <% docAlias = (String) request.getAttribute("doc");%>
-    <body>
+    <body><a href="logOutServlet">Log Out</a>
         <h1>Review for: <%= docAlias%></h1>
         <div>Date: <%= review.getDate()%></div>
         <div>Rating: <%= review.getStarRating()%></div>

@@ -83,8 +83,8 @@ public class Lab3DBAO {
         return con;
     }
 
-    public static ArrayList<Doctor> queryDoctor(String doctorName, String gender,
-            String street,String city, String province, String country, 
+    public static ArrayList<Doctor> queryDoctor(String userAlias,String doctorName, String gender,
+            String street,String city, String province, 
             String postalCode,String specialization, int yearsLicensed,
             double avgStarRating, String comments, Boolean reviewedByFriend)
             throws ClassNotFoundException, SQLException, NamingException {
@@ -124,9 +124,6 @@ public class Lab3DBAO {
             if(province.length() != 0){
                 query+= " AND province like ?";
             }
-            if(country.length() != 0){
-                query+= " AND country like ?";
-            }
             if(postalCode.length() != 0){
                 query+= " AND postal_code like ?";
             }
@@ -134,7 +131,7 @@ public class Lab3DBAO {
                 query+= " AND specialization like ?";
             }
             if(yearsLicensed != -1){
-                query+= " AND years_licensed >= ?";
+                query+= " AND YEAR(CURDATE()) - license_year >= ?";
             }
             query+=" GROUP BY Doctor.doc_alias";
             query+=") as DocAdrSpec on Ratings.doc_alias=DocAdrSpec.doc_alias)"
@@ -187,9 +184,6 @@ public class Lab3DBAO {
             if (province.length() != 0) {
                 pstmt.setString(++num, "%"+province+"%");
             }
-            if (country.length() != 0) {
-                pstmt.setString(++num, "%"+country+"%");
-            }
             if (postalCode.length() != 0) {
                 pstmt.setString(++num, "%"+postalCode+"%");
             }
@@ -201,8 +195,8 @@ public class Lab3DBAO {
             }
             //need to change for testing
             if(reviewedByFriend){
-                pstmt.setString(++num, "pat_nathan");
-                pstmt.setString(++num, "pat_nathan");
+                pstmt.setString(++num, userAlias);
+                pstmt.setString(++num, userAlias);
             }
             if (comments.length() != 0) {
                 pstmt.setString(++num, "%"+comments+"%");
@@ -245,14 +239,14 @@ public class Lab3DBAO {
 
             /* Build SQL query */
             String query ="select DocAlias.doc_alias,DocAlias.name," +
-            "DocAlias.gender,DocAlias.years_licensed,Ratings.avg_star_rating,"
+            "DocAlias.gender,DocAlias.license_year,Ratings.avg_star_rating,"
                     + "Ratings.num_of_reviews from " +
             "(select doc_alias, avg(rating) as avg_star_rating," +
             "count(rating) as num_of_reviews " +
             "from Doctor natural join Review " +
             "where Doctor.doc_alias=Review.doc_alias and doc_alias=?"
                     + "group by Doctor.doc_alias) as Ratings";
-            query+=" right join (select doc_alias,name,gender,years_licensed from Doctor "
+            query+=" right join (select doc_alias,name,gender,license_year from Doctor "
                     + "WHERE doc_alias=?) as DocAlias "
                     + "on Ratings.doc_alias=DocAlias.doc_alias";
             pstmt = con.prepareStatement(query);
@@ -271,7 +265,7 @@ public class Lab3DBAO {
                         resultSet.getString("gender"),
                         resultSet.getDouble("avg_star_rating"),
                         resultSet.getInt("num_of_reviews"),
-                        resultSet.getInt("years_licensed"));
+                        resultSet.getInt("license_year"));
                 ret = d;
             }
             return ret;
@@ -294,7 +288,7 @@ public class Lab3DBAO {
             con = getConnection();
 
             /* Build SQL query */
-            String query = "select street,city,province,postal_code,country "
+            String query = "select street,city,province,postal_code "
                     + "from DoctorAddress " +
                 "where doc_alias=?;";
             pstmt = con.prepareStatement(query);
@@ -310,7 +304,6 @@ public class Lab3DBAO {
                         resultSet.getString("street"),
                         resultSet.getString("city"),
                         resultSet.getString("province"),
-                        resultSet.getString("country"),
                         resultSet.getString("postal_code"));
                 ret.add(a);
             }
@@ -513,7 +506,7 @@ public class Lab3DBAO {
             }
         }
     }
-public static void writeReview(String docAlias, int rating, String comments)
+public static void writeReview(String userAlias, String docAlias, double rating, String comments)
             throws ClassNotFoundException, SQLException, NamingException {
         {
             Connection con = null;
@@ -526,9 +519,9 @@ public static void writeReview(String docAlias, int rating, String comments)
                 pstmt = con.prepareStatement("INSERT INTO "
                         + "Review(pat_alias,doc_alias,date,rating,comments) "
                         + " VALUES(?, ?, CURDATE(), ?, ?)");
-                pstmt.setString(1, "pat_nathan");
+                pstmt.setString(1, userAlias);
                 pstmt.setString(2, docAlias);
-                pstmt.setInt(3, rating);
+                pstmt.setDouble(3, rating);
                 pstmt.setString(4, comments);
                 pstmt.executeUpdate();
                 //con.commit();

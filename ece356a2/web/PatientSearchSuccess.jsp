@@ -15,7 +15,7 @@
     <% patientInfo = (ArrayList<Patient>) request.getAttribute("searchAPatient");%>
    
 
-    <body>
+    <body><a href="logOutServlet">Log Out</a>
         <%
             if (patientInfo != null) {
                 out.println("<h1>Patient Info</h1>");
@@ -51,8 +51,7 @@
                 
             }
         %>
-        <p>
-        <a href=HandleFriendStatusServlet?action=viewrequest>View Friend Requests</a><br><br>  
+        <p> 
         <a href="patient_search.jsp">return to Search A Patient main page</a>
     </body>
 </html>

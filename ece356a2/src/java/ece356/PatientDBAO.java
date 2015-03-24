@@ -10,6 +10,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
 
 
@@ -60,7 +61,7 @@ public class PatientDBAO {
         return con;
     }
     
-   public static ArrayList<Patient> searchPatient(HttpServletRequest request)
+   public static ArrayList<Patient> searchPatient(HttpServletRequest request, String userAlias)
             throws ClassNotFoundException, SQLException, NamingException {
         Connection con = null;
         PreparedStatement pStmt = null;
@@ -85,7 +86,7 @@ public class PatientDBAO {
                 sql = sql.substring(0, sql.lastIndexOf("AND"));
             }
             if(sql.endsWith("WHERE ")){
-                sql = sql.substring(0, sql.lastIndexOf("WHERE"));
+                sql += "pat_alias!=?";
             }
             sql+=";";
             
@@ -100,6 +101,7 @@ public class PatientDBAO {
             if(city.length() != 0){
                 pStmt.setString(++start, request.getParameter("Pcity"));
             }
+            pStmt.setString(++start, userAlias);
             ResultSet rs = pStmt.executeQuery();
             patient = new ArrayList<>();
             while (rs.next()) {
@@ -107,7 +109,7 @@ public class PatientDBAO {
                 String checkStatusOneOrTwo = null;
                 String pat_alias = rs.getString("pat_alias");
                 // Replace this with Session object from Login Screen
-                String pat_alias2 = "pat_nathan";
+                String pat_alias2 = userAlias;
                 String friendReqSql = "SELECT * FROM Friend WHERE pat_alias1=? AND pat_alias2=?"
                         + " OR pat_alias1=? AND pat_alias2=?;";
                 pStmt = con.prepareStatement(friendReqSql);
@@ -153,18 +155,18 @@ public class PatientDBAO {
         }          
     }
    
-   public static ArrayList<Patient> viewRequest(HttpServletRequest request)
+   public static ArrayList<Patient> viewRequest(HttpServletRequest request, String userAlias)
             throws ClassNotFoundException, SQLException, NamingException {
         
         Connection con = null;
         PreparedStatement pStmt = null;
         // change the session object here
-        String pat_alias2 = "pat_nathan";
+        String pat_alias2 = userAlias;
         try {
             con = getConnection();
             String sendRequestSql = "select pat_alias1 from Friend "
                     + "where pat_alias2=? and pat_alias1 " 
-                    +"not in(select pat_alias2 from "
+                    +"not in (select pat_alias2 from "
                     + "Friend where pat_alias1=?);";
             pStmt = con.prepareStatement(sendRequestSql);
             // Change the session object from Login screen here
@@ -190,12 +192,11 @@ public class PatientDBAO {
        
    }
    
-   public static void sendRequest(HttpServletRequest request)
+   public static void sendRequest(HttpServletRequest request, String userAlias)
             throws ClassNotFoundException, SQLException, NamingException {
         Connection con = null;
         PreparedStatement pStmt = null;
         // change the session object here
-        String pat_alias2 = "pat_nathan";
         String action = request.getParameter("action");
         String palias = request.getParameter("palias");
         try {
@@ -203,14 +204,14 @@ public class PatientDBAO {
             if("send".equals(action)){
                 String sendRequestSql = "INSERT INTO Friend VALUES(?, ?);";
                 pStmt = con.prepareStatement(sendRequestSql);
-                pStmt.setString(1, pat_alias2);
+                pStmt.setString(1, userAlias);
                 pStmt.setString(2, palias); 
                 pStmt.executeUpdate();
             }  
             else if("accept".equals(action)){
                 String sendRequestSql = "INSERT INTO Friend VALUES(?, ?);";
                 pStmt = con.prepareStatement(sendRequestSql);
-                pStmt.setString(1, pat_alias2);
+                pStmt.setString(1, userAlias);
                 pStmt.setString(2, palias); 
                 pStmt.executeUpdate();
             }

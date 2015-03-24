@@ -11,7 +11,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
      <title>Search A Patient</title>
     </head>
-    <body>
+    <body><a href="logOutServlet">Log Out</a>
         <h1>Welcome to Search a Patient feature!</h1>
         <form action="PatientSearchServlet" method="POST">
             Enter searching criteria in any combination:<br><br>

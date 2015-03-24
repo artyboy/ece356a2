@@ -17,7 +17,7 @@ BEGIN
 					(select pat_alias2 from Friend where pat_alias1=patient_alias)
 			)
 		)
-		or comments like CONCAT('%',review_keyword,'%'))
+		and comments like CONCAT('%',review_keyword,'%'))
 	group by Doctor.doc_alias) as Friend;
 END
 $

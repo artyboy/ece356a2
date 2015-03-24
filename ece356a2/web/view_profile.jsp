@@ -26,7 +26,7 @@
     <% reviewList = (ArrayList<Review>) request.getAttribute("reviewList");%>
     <%
         if (doc != null) {
-    %>
+    %><a href="logOutServlet">Log Out</a>
         <h1><%= doc.getDoctorName()%></h1>
     
     <body>
@@ -37,7 +37,7 @@
             </form>
         </div><br>
         <span>Gender: <%= doc.getGender()%></span>
-        <div>Years Licensed: <%= doc.getYearsLicensed()%></div>
+        <div>Year Licensed: <%= doc.getYearsLicensed()%></div>
         <div>Avg Rating: <%= doc.getAverageStarRating()%></div>
         <div>Number of Reviews: <%= doc.getNumOfReviews()%></div>
         <%
@@ -53,7 +53,6 @@
                 <span><%= adrs.getStreet()%>,</span>
                 <span><%= adrs.getCity()%>,</span>
                 <span><%= adrs.getProvince()%>,</span>
-                <span><%= adrs.getCountry()%>,</span>
                 <span><%= adrs.getPostalCode()%></span>
             </li>
             <%
@@ -111,8 +110,7 @@
             }
         %>
         <div>
-            
-            <button onclick="goBack()">Go Back</button>
+           
 
 <script>
 function goBack() {

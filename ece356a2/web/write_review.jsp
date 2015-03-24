@@ -14,14 +14,14 @@
     </head>
     <%! String docAlias;%>
     <% docAlias = (String) request.getAttribute("docAlias");%>
-    <body>
+    <body><a href="logOutServlet">Log Out</a>
         <h1>Review for: <%= docAlias%></h1>
         <form action="QueryServlet?qnum=4&docAlias=<%= docAlias%>" method="POST">
             Star Rating<input type="number"
                                       name="rating" value="" step="0.5" min="0" max="5"/> out of 5<br>
             Comment keywords<br> <textarea type="textarea"
                                            name="keywords" value="" maxlength="1000" /></textarea><br>
-            <input type="submit" value="Submit Query" />
+            <input type="submit" value="Submit Review" />
         </form>
     </body>
 </html>
