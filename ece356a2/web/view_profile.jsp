@@ -5,6 +5,7 @@
 --%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="ece356.Doctor"%>
+<%@page import="ece356.UserData"%>
 <%@page import="ece356.Address"%>
 <%@page import="ece356.Specialization"%>
 <%@page import="ece356.Review"%>
@@ -24,22 +25,41 @@
     <% specList = (ArrayList<Specialization>) request.getAttribute("specList");%>
     <%! ArrayList<Review> reviewList;%>
     <% reviewList = (ArrayList<Review>) request.getAttribute("reviewList");%>
-    <%
-        if (doc != null) {
-    %><a href="logOutServlet">Log Out</a>
-        <h1><%= doc.getDoctorName()%></h1>
     
     <body>
+    <%
+        if(session.getAttribute("userData") != null){    
+    %>
+    <%
+        if (doc != null) {
+    %>
+        <a href="logOutServlet">Log Out</a>
+        <a href="patient_home.jsp">Return Home</a>
+        <h1><%= doc.getDoctorName()%></h1>
+        <%
+        if(
+            !(Boolean)session.getAttribute("isDoctor")){
+        
+        %>
         <div>
             <form action="QueryServlet?qnum=3" method="post">
                 <input type="hidden" name="docAlias" value="<%= doc.getDoctorAlias()%>"/>
                 <input type="submit" name="Write Review" value="Write Review"/>
             </form>
         </div><br>
+        <%
+        }
+        %>
         <span>Gender: <%= doc.getGender()%></span>
         <div>Year Licensed: <%= doc.getYearsLicensed()%></div>
         <div>Avg Rating: <%= doc.getAverageStarRating()%></div>
         <div>Number of Reviews: <%= doc.getNumOfReviews()%></div>
+        <%
+        if(
+            (Boolean)session.getAttribute("isDoctor") && (((UserData)session.getAttribute("userData")).getAlias().equals(doc.getDoctorAlias()))){
+            out.println("<div>Email:"+doc.getEmail()+" </div>");
+        }
+        %>
         <%
             if (addressList != null) {
         %>
@@ -106,21 +126,23 @@
             %>
         </table>
         
-        <%
-            }
-        %>
-        <div>
-           
-
-<script>
-function goBack() {
-    window.history.back()
-}
-</script>
-        </div>
-    </body>
-    
     <%
         }
-    %>
+            
+        %>
+        <!--<a href="QueryServlet?qnum=1">Go back to search</a>-->
+         <%
+        }
+            
+        %>
+        <%
+        } 
+        else{
+            %>
+            <a href="/ece356a2/index.jsp">Please login</a>
+            <%
+        }
+            %>
+    </body>
+    
 </html>

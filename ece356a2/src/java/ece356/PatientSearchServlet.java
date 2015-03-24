@@ -18,7 +18,6 @@ public class PatientSearchServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         String url;
         try {
-            
         HttpSession session = request.getSession(true);
         String userAlias = ((UserData)session.getAttribute("userData")).getAlias();
             ArrayList patient = PatientDBAO.searchPatient(request, userAlias);

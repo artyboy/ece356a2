@@ -79,15 +79,79 @@ public class QueryServlet extends HttpServlet {
     }
     protected void querydoctorhelper(HttpServletRequest request, HttpServletResponse response, String userAlias)
             throws java.sql.SQLException, ClassNotFoundException, NamingException {
+        Doctor savedDoctor = new Doctor();
+        Address savedAddress = new Address();
+        Specialization savedSpec = new Specialization();
+        HttpSession session = request.getSession(true);
         String doctorName = request.getParameter("doctorName");
+        if(doctorName != null){
+            savedDoctor.setDoctorName(doctorName);
+        }else{
+            doctorName = (((Doctor)session.getAttribute("savedDoctorQuery")).getDoctorName()!= null) ? 
+                        ((Doctor)session.getAttribute("savedDoctorQuery")).getDoctorName(): "" ;
+            savedDoctor.setDoctorName("");
+        }
         String gender = request.getParameter("gender");
+        if(gender != null){
+            savedDoctor.setGender(gender);
+        }else{
+            gender = (((Doctor)session.getAttribute("savedDoctorQuery")).getGender()!= null) ? 
+                        ((Doctor)session.getAttribute("savedDoctorQuery")).getGender(): "" ;
+            savedDoctor.setGender("");
+        }
         String street = request.getParameter("street");
+        if(street != null){
+            savedAddress.setStreet(street);
+        }else{
+            street = (((Address)session.getAttribute("savedAddressQuery")).getStreet()!= null) ? 
+                        ((Address)session.getAttribute("savedAddressQuery")).getStreet(): "" ;
+            savedAddress.setStreet("");
+        }
         String city = request.getParameter("city");
+        if(city != null){
+            savedAddress.setCity(city);
+        }else{
+            city = (((Address)session.getAttribute("savedAddressQuery")).getCity()!= null) ? 
+                        ((Address)session.getAttribute("savedAddressQuery")).getCity(): "" ;
+            savedAddress.setCity("");
+        }
         String province = request.getParameter("province");
+        if(province != null){
+            savedAddress.setProvince(province);
+        }else{
+            province = (((Address)session.getAttribute("savedAddressQuery")).getProvince()!= null) ? 
+                        ((Address)session.getAttribute("savedAddressQuery")).getProvince(): "" ;
+            savedAddress.setProvince("");
+        }
         String postalCode = request.getParameter("postalCode");
+        if(postalCode != null){
+            savedAddress.setPostalCode(postalCode);
+        }else{
+            doctorName = (((Address)session.getAttribute("savedAddressQuery")).getPostalCode()!= null) ? 
+                        ((Address)session.getAttribute("savedAddressQuery")).getPostalCode(): "" ;
+            savedAddress.setPostalCode("");
+        }
         String specialization = request.getParameter("specialization");
+        if(specialization != null){
+            savedSpec.setSpecialization(specialization);
+        }else{
+            specialization = (((Specialization)session.getAttribute("savedSpecQuery")).getSpecialization()!= null) ? 
+                        ((Specialization)session.getAttribute("savedSpecQuery")).getSpecialization(): "" ;
+            savedSpec.setSpecialization("");
+        }
         String strYearsLicensed = request.getParameter("yearsLicensed");
         int yearsLicensed = -1;
+        if(strYearsLicensed != null && !strYearsLicensed.equals("")){
+            savedDoctor.setYearsLicensed(Integer.parseInt(strYearsLicensed));
+        }else{
+            yearsLicensed = (session.getAttribute("savedDoctorQuery")!= null) ? 
+                        ((Doctor)session.getAttribute("savedDoctorQuery")).getYearsLicensed(): 0 ;
+            savedDoctor.setYearsLicensed(yearsLicensed);
+        }
+        
+        session.setAttribute("savedDoctorQuery",savedDoctor);
+        session.setAttribute("savedAddressQuery",savedAddress);
+        session.setAttribute("savedSpecQuery",savedSpec);
         if (!strYearsLicensed.equals("")) {
             yearsLicensed = Integer.parseInt(strYearsLicensed);
             if (yearsLicensed < 0) {
@@ -96,6 +160,13 @@ public class QueryServlet extends HttpServlet {
         }
         String strAvgStarRating = request.getParameter("avgStarRating");
         double avgStarRating = -1.0;
+        if(strAvgStarRating != null && !strAvgStarRating.equals("")){
+            savedDoctor.setAverageStarRating(Integer.parseInt(strAvgStarRating));
+        }else{
+            avgStarRating = (session.getAttribute("savedDoctorQuery")!= null) ? 
+                        ((Doctor)session.getAttribute("savedDoctorQuery")).getAverageStarRating(): 0 ;
+            savedDoctor.setAverageStarRating(avgStarRating);
+        }
         if (!strAvgStarRating.equals("")) {
             avgStarRating = Double.parseDouble(strAvgStarRating);
             if (avgStarRating < 0.0) {
@@ -163,7 +234,7 @@ public class QueryServlet extends HttpServlet {
             throws java.sql.SQLException, ClassNotFoundException, NamingException {
         String doctorAlias = request.getParameter("docAlias");
         String strStarRating = request.getParameter("rating");
-        double rating = 0.0;
+        double rating = -1.0;
         if (!strStarRating.equals("")) {
             rating = Double.parseDouble(strStarRating);
             if (rating < 0.0) {

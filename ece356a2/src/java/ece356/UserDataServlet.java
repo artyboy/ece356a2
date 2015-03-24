@@ -11,6 +11,7 @@ import static java.lang.System.out;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -33,18 +34,24 @@ public class UserDataServlet extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException, ClassNotFoundException, SQLException {
+            throws ServletException, IOException, ClassNotFoundException, SQLException, NamingException {
        try{
         UserData ud = new UserData();
         ud.alias = request.getParameter("alias");
         ud.password = request.getParameter("password");
-        HttpSession session = request.getSession();
+        HttpSession session = request.getSession(true);
         session.setAttribute("userData", ud);
+        if(Lab3DBAO.isDoctor(ud.getAlias())){
+            session.setAttribute("isDoctor", true);
+        }else
+            session.setAttribute("isDoctor", false);
+        
         boolean flag = HandleUserLogIn.verifyLogIn(request);
         if (flag == true){
             getServletContext().getRequestDispatcher("/user_data_thanks.jsp").forward(request, response);
         }else{
-            
+            session.invalidate();
+            getServletContext().getRequestDispatcher("/user_data_failed.jsp").forward(request, response);
         }
         
        }
@@ -72,6 +79,8 @@ public class UserDataServlet extends HttpServlet {
             Logger.getLogger(UserDataServlet.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(UserDataServlet.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NamingException ex) {
+            Logger.getLogger(UserDataServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -91,6 +100,8 @@ public class UserDataServlet extends HttpServlet {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(UserDataServlet.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
+            Logger.getLogger(UserDataServlet.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NamingException ex) {
             Logger.getLogger(UserDataServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

@@ -239,14 +239,14 @@ public class Lab3DBAO {
 
             /* Build SQL query */
             String query ="select DocAlias.doc_alias,DocAlias.name," +
-            "DocAlias.gender,DocAlias.license_year,Ratings.avg_star_rating,"
+            "DocAlias.gender,DocAlias.license_year,DocAlias.email,Ratings.avg_star_rating,"
                     + "Ratings.num_of_reviews from " +
             "(select doc_alias, avg(rating) as avg_star_rating," +
             "count(rating) as num_of_reviews " +
             "from Doctor natural join Review " +
             "where Doctor.doc_alias=Review.doc_alias and doc_alias=?"
                     + "group by Doctor.doc_alias) as Ratings";
-            query+=" right join (select doc_alias,name,gender,license_year from Doctor "
+            query+=" right join (select doc_alias,name,email,gender,license_year from Doctor "
                     + "WHERE doc_alias=?) as DocAlias "
                     + "on Ratings.doc_alias=DocAlias.doc_alias";
             pstmt = con.prepareStatement(query);
@@ -265,7 +265,8 @@ public class Lab3DBAO {
                         resultSet.getString("gender"),
                         resultSet.getDouble("avg_star_rating"),
                         resultSet.getInt("num_of_reviews"),
-                        resultSet.getInt("license_year"));
+                        resultSet.getInt("license_year"),
+                        resultSet.getString("email"));
                 ret = d;
             }
             return ret;
@@ -364,7 +365,7 @@ public class Lab3DBAO {
             /* Build SQL query */
             String query = "select * from Review " +
                 "where doc_alias=?" +
-                "order by date desc;";
+                "order by rev_id desc;";
             pstmt = con.prepareStatement(query);
             int num = 0;
             if (doctorAlias.length() != 0) {
@@ -442,7 +443,7 @@ public class Lab3DBAO {
             /* Build SQL query */
             String query = "select rev_id from Review " +
                 "where doc_alias=? and rev_id > ?" +
-                " order by date;";
+                " order by rev_id;";
             pstmt = con.prepareStatement(query);
             int num = 0;
             if (docAlias.length() != 0) {
@@ -480,7 +481,7 @@ public class Lab3DBAO {
             /* Build SQL query */
             String query = "select rev_id from Review " +
                 "where doc_alias=? and rev_id < ?" +
-                " order by date desc;";
+                " order by rev_id desc;";
             pstmt = con.prepareStatement(query);
             int num = 0;
             if (docAlias.length() != 0) {
@@ -497,6 +498,35 @@ public class Lab3DBAO {
             else{
                 return revID;
             }
+        } finally {
+            if (pstmt != null) {
+                pstmt.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        }
+    }
+     public static Boolean isDoctor(String userAlias)
+            throws ClassNotFoundException, SQLException, NamingException {
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ArrayList<Specialization> ret;
+
+        try {
+            con = getConnection();
+
+            /* Build SQL query */
+            String query = "select doc_alias from Doctor " +
+                "where doc_alias=?";
+            pstmt = con.prepareStatement(query);
+            int num = 0;
+            if (userAlias.length() != 0) {
+                pstmt.setString(++num, userAlias);
+            }
+            ResultSet resultSet;
+            resultSet = pstmt.executeQuery();
+            return resultSet.first();
         } finally {
             if (pstmt != null) {
                 pstmt.close();
@@ -540,25 +570,4 @@ public static void writeReview(String userAlias, String docAlias, double rating,
         }
     }
 
-    public static void deleteEmployee(int empID)
-            throws ClassNotFoundException, SQLException, NamingException {
-        {
-            Connection con = null;
-            PreparedStatement pstmt = null;
-            ArrayList ret = null;
-            try {
-                con = getConnection();
-                pstmt = con.prepareStatement("DELETE FROM Employee WHERE empID = ?");
-                pstmt.setInt(1, empID);
-                pstmt.executeUpdate();
-            } finally {
-                if (pstmt != null) {
-                    pstmt.close();
-                }
-                if (con != null) {
-                    con.close();
-                }
-            }
-        }
-    }
 }

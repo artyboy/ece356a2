@@ -16,6 +16,7 @@ public class Doctor {
     private int yearsLicensed;
     private double averageStarRating;
     private int numOfReviews;
+    private String email;
 
     public Doctor() {
     }
@@ -35,6 +36,20 @@ public class Doctor {
         this.averageStarRating = averageStarRating;
         this.numOfReviews = numOfReviews;
         this.yearsLicensed = yearsLicensed;
+    }
+    public Doctor(String doctorAlias, String doctorName, String gender, 
+            double averageStarRating, int numOfReviews, int yearsLicensed,String email) {
+        this.doctorAlias = doctorAlias;
+        this.doctorName = doctorName;
+        this.gender = gender;
+        this.averageStarRating = averageStarRating;
+        this.numOfReviews = numOfReviews;
+        this.yearsLicensed = yearsLicensed;
+        this.email = email;
+    }
+
+    public String getEmail() {
+        return email;
     }
 
     public int getNumOfReviews() {
@@ -59,6 +74,10 @@ public class Doctor {
 
     public double getAverageStarRating() {
         return averageStarRating;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public void setDoctorAlias(String doctorAlias) {

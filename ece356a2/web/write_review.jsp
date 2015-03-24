@@ -14,7 +14,11 @@
     </head>
     <%! String docAlias;%>
     <% docAlias = (String) request.getAttribute("docAlias");%>
-    <body><a href="logOutServlet">Log Out</a>
+    <body>
+    <%
+        if(session.getAttribute("userData") != null){    
+    %>
+        <a href="logOutServlet">Log Out</a>
         <h1>Review for: <%= docAlias%></h1>
         <form action="QueryServlet?qnum=4&docAlias=<%= docAlias%>" method="POST">
             Star Rating<input type="number"
@@ -23,5 +27,13 @@
                                            name="keywords" value="" maxlength="1000" /></textarea><br>
             <input type="submit" value="Submit Review" />
         </form>
+        <%
+        } 
+        else{
+            %>
+            <a href="/ece356a2/index.jsp">Please login</a>
+            <%
+        }
+            %>
     </body>
 </html>

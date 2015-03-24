@@ -39,6 +39,7 @@ public class HandleFriendStatusServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         String url;
         String action = request.getParameter("action");
+        String reqUrl = request.getParameter("url");
         String requestURL = request.getRequestURL().toString();
         try {
             
@@ -50,15 +51,17 @@ public class HandleFriendStatusServlet extends HttpServlet {
                 url = "/viewRequestSuccess.jsp";
             }else{
                 PatientDBAO.sendRequest(request,userAlias);
-//                if(requestURL.contains("PatientSearchServlet")){
-//                    url = "/PatientSearchSuccess.jsp";
-//                }
-//                else if(requestURL.contains("HandleFriendStatusServlet")){
-//                    url = "/viewRequestSuccess.jsp";
-//                }
-//                else{
+                if(reqUrl.equals("search")){
+                    ArrayList patient = PatientDBAO.searchPatient(request, userAlias);
+                    request.setAttribute("searchAPatient", patient);
+                    url = "/PatientSearchSuccess.jsp";
+                }
+                else if(reqUrl.equals("request")){
+                    ArrayList viewRequest = PatientDBAO.viewRequest(request,userAlias);
+                    request.setAttribute("viewRequest", viewRequest);
+                    url = "/viewRequestSuccess.jsp";
+                }else
                     url = "/sendRequestSuccess.jsp";
- //               }
             }      
             
         } catch (ClassNotFoundException | SQLException e) {

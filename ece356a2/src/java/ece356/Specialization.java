@@ -12,6 +12,9 @@ package ece356;
 public class Specialization {
     private String specialization;
 
+    public Specialization() {
+    }
+
     public Specialization(String specialization) {
         this.specialization = specialization;
     }

@@ -27,16 +27,16 @@
                     String palias = p.getPatientAlias();
                     out.print(palias);
                     out.print("</td><td>");
-                    out.print("<a href=\"HandleFriendStatusServlet?action=send&palias="+p.getPatientAlias()+"\">Accept Request</a>");
+                    out.print("<a href=\"HandleFriendStatusServlet?action=send&url=request&palias="+p.getPatientAlias()+"\">Accept Request</a>");
                 }
                 out.println("</table>");
                 }
                 else{
-                    out.println("<div>No Results</div>");
+                    out.println("<div>No Friend Requests</div>");
                 }
             }
         %>
         <p>   
-        <a href="index.jsp">return to  Search A Patient main page</a>
+        <a href="patient_home.jsp">Return Home</a>
     </body>
 </html>

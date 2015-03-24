@@ -67,27 +67,41 @@ public class PatientDBAO {
         PreparedStatement pStmt = null;
        // Statement pStmt = con.createStatement();
         ArrayList<Patient> patient;
+        Patient savedQuery = new Patient();
         try {
             con = getConnection();
-            String sql = "SELECT * FROM Patients WHERE ";  
+            HttpSession session = request.getSession(true);
+            String sql = "SELECT * FROM Patients WHERE TRUE ";  
             String patientAlias = request.getParameter("Palias");
+            if(patientAlias == null){
+                patientAlias = (((Patient)session.getAttribute("patientQuery")).getPatientAlias()!= null) ? 
+                        ((Patient)session.getAttribute("patientQuery")).getPatientAlias(): "" ;
+            }
             if(patientAlias.length()!=0){
-                sql+="pat_alias = ? AND ";
+                sql+="AND pat_alias = ? ";
+                savedQuery.setPatientAlias(patientAlias);
             }
             String patientProvince = request.getParameter("Pprovince");
+            
+            if(patientProvince == null){
+                patientProvince = (((Patient)session.getAttribute("patientQuery")).getProvince() != null) ? 
+                        ((Patient)session.getAttribute("patientQuery")).getProvince(): "" ;
+            }
             if(patientProvince.length()!=0 && !"Black".equals(patientProvince)){
-                sql+="province = ? AND ";
+                sql+="AND province = ? ";
+                savedQuery.setProvince(patientProvince);
             }
             String city = request.getParameter("Pcity");
+            if(city == null){
+                city = (((Patient)session.getAttribute("patientQuery")).getCity()!= null) ? 
+                        ((Patient)session.getAttribute("patientQuery")).getCity(): "" ;
+            }
             if(city.length() != 0){
-                sql+="city = ? AND ";
+                sql+="AND city = ? ";
+                savedQuery.setCity(city);
             }
-            if(sql.endsWith("AND ")){
-                sql = sql.substring(0, sql.lastIndexOf("AND"));
-            }
-            if(sql.endsWith("WHERE ")){
-                sql += "pat_alias!=?";
-            }
+            session.setAttribute("patientQuery",savedQuery);
+             sql += "AND pat_alias != ?";
             sql+=";";
             
            pStmt = con.prepareStatement(sql);

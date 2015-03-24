@@ -8,6 +8,9 @@ public class Patient {
     private String patientName;
     private int friendStatus;
 
+    public Patient() {
+    }
+
     public Patient(String patientAlias, String city, String province,
             String email, String patientName, int friendStatus) {
         this.patientAlias = patientAlias;

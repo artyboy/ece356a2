@@ -1,6 +1,6 @@
 <%-- 
-    Document   : view_friend_requests
-    Created on : 17-Mar-2015, 10:56:11 AM
+    Document   : user_data_failed
+    Created on : 24-Mar-2015, 1:45:06 AM
     Author     : steal_000
 --%>
 
@@ -9,9 +9,10 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
+        <title>Failed Login</title>
     </head>
     <body>
-        <h1>Hello World!</h1>
+        <h1>Your username or password is wrong.</h1>
+        <a href="/ece356a2/index.jsp">Go back to login again</a>
     </body>
 </html>

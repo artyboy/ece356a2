@@ -17,7 +17,12 @@
     <% review = (Review) request.getAttribute("review");%>
     <%! String docAlias;%>
     <% docAlias = (String) request.getAttribute("doc");%>
-    <body><a href="logOutServlet">Log Out</a>
+    <body>
+    <%
+        if(session.getAttribute("userData") != null){    
+    %>
+        <a href="logOutServlet">Log Out</a>
+        <a href="patient_home.jsp">Return Home</a>
         <h1>Review for: <%= docAlias%></h1>
         <div>Date: <%= review.getDate()%></div>
         <div>Rating: <%= review.getStarRating()%></div>
@@ -34,5 +39,13 @@
             <input type="hidden" name="docAlias" value="<%=docAlias%>" />
             <input type="submit" value="Next Review" />
         </form>
+        <%
+        } 
+        else{
+            %>
+            <a href="/ece356a2/index.jsp">Please login</a>
+            <%
+        }
+            %>
     </body>
 </html>

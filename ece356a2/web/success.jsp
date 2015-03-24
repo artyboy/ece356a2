@@ -18,6 +18,7 @@
     <% doctorList = (ArrayList<Doctor>) request.getAttribute("doctorList");%>
 
     <body><a href="logOutServlet">Log Out</a>
+            <a href="patient_home.jsp">Return Home</a>
         <%
             if (doctorList != null) {
                 if(doctorList.size() > 0){
@@ -52,13 +53,13 @@
                 else{
             
             %>
-            <div>No Results</div>
+            <div>No Doctors match specified query</div>
             <%
                 }
             }
             
             %>
         <p>
-            <a href="index.jsp">return to main page</a>
+            <a href="doctor_search.jsp">Return to Search</a>
     </body>
 </html>

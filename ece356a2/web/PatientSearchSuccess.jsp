@@ -20,7 +20,12 @@
             if (patientInfo != null) {
                 out.println("<h1>Patient Info</h1>");
                 out.println("<table border=1>");
-                out.println("<tr><th>Patient Alias</th><th>City</th><th>Province</th><th>Email</th><th>Patient Name</th><th>Friend Status</th></tr>");
+                out.println("<tr><th>Patient Alias</th><th>City</th><th>Province</th><th>Email</th><th>Patient Name</th>");
+                if(!(Boolean)session.getAttribute("isDoctor")){
+                    out.println("<th>Friend Status</th></tr>");
+                }else{
+                     out.println("</tr>");
+                }
                 for (Patient p : patientInfo) {
                     out.println("<tr><td>");
                     String palias = p.getPatientAlias();
@@ -33,18 +38,20 @@
                     out.print(p.getEmail());
                     out.print("</td><td>");
                     out.print(p.getPatientName());
+                    if(!(Boolean)session.getAttribute("isDoctor")){
                     if(p.getFriendStatus() == 0){
                         out.print("</td><td>");
-                        out.print("<a href=\"HandleFriendStatusServlet?action=send&palias="+p.getPatientAlias()+"\">Send Friend request</a>");
+                        out.print("<a href=\"HandleFriendStatusServlet?action=send&url=search&palias="+p.getPatientAlias()+"\">Send Friend request</a>");
                     }else if(p.getFriendStatus() == 1){
                         out.print("</td><td>");
-                        out.print("<a href=\"HandleFriendStatusServlet?action=accept&palias="+p.getPatientAlias()+"\">Accept Friend Request</a>");
+                        out.print("<a href=\"HandleFriendStatusServlet?action=accept&url=search&palias="+p.getPatientAlias()+"\">Accept Friend Request</a>");
                     }else if(p.getFriendStatus() == 2){
                         out.print("</td><td>");
                         out.print("Not Accepted Yet");
                     }else if(p.getFriendStatus() == 3){
                         out.print("</td><td>");
                         out.print("Already Friends");
+                    }
                     }
                 }
                 out.println("</table>");

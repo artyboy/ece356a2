@@ -11,7 +11,12 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Doctor Search</title>
     </head>
-    <body><a href="logOutServlet">Log Out</a>
+    <body>
+    <%
+        if(session.getAttribute("userData") != null){    
+    %>
+        <a href="logOutServlet">Log Out</a>
+        <a href="patient_home.jsp">Return Home</a>
         <h1>Doctor Search</h1>
         <form action="QueryServlet?qnum=1" method="POST">
             Doctor Name <input type="text"
@@ -55,5 +60,13 @@
                                       name="keywords" value="" /><br>
             <input type="submit" value="Submit" />
         </form>
+        <%
+        } 
+        else{
+            %>
+            <a href="/ece356a2/index.jsp">Please login</a>
+            <%
+        }
+            %>
     </body>
 </html>

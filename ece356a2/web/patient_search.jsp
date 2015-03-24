@@ -11,7 +11,11 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
      <title>Search A Patient</title>
     </head>
-    <body><a href="logOutServlet">Log Out</a>
+    <body>
+    <%
+        if(session.getAttribute("userData") != null){    
+    %>
+        <a href="logOutServlet">Log Out</a>
         <h1>Welcome to Search a Patient feature!</h1>
         <form action="PatientSearchServlet" method="POST">
             Enter searching criteria in any combination:<br><br>
@@ -35,5 +39,14 @@
             Patient City: <input type="text" name="Pcity" value=""/><br><br><br>
             <input type="submit" value="Search">
         </form>
+        <br><a href="patient_home.jsp">Return home</a>
+        <%
+        }
+        else{
+        %>
+        <a href="/ece356a2/index.jsp">Please login</a>
+        <%
+        }
+        %>
     </body>
 </html>
