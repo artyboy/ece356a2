@@ -19,10 +19,15 @@ public class PatientSearchServlet extends HttpServlet {
         String url;
         try {
         HttpSession session = request.getSession(true);
+        if(((UserData)session.getAttribute("userData")) != null){
         String userAlias = ((UserData)session.getAttribute("userData")).getAlias();
             ArrayList patient = PatientDBAO.searchPatient(request, userAlias);
             request.setAttribute("searchAPatient", patient);
             url = "/PatientSearchSuccess.jsp";
+        }
+        else{
+            url="/error_page.jsp";
+        }
         } catch (ClassNotFoundException | SQLException e) {
             request.setAttribute("exception", e);
             url = "/PatientSearchError.jsp";

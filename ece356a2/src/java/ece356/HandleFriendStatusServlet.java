@@ -44,6 +44,7 @@ public class HandleFriendStatusServlet extends HttpServlet {
         try {
             
         HttpSession session = request.getSession(true);
+        if(!(Boolean)session.getAttribute("isDoctor")){
         String userAlias = ((UserData)session.getAttribute("userData")).getAlias();
             if("viewrequest".equals(action)){
                 ArrayList viewRequest = PatientDBAO.viewRequest(request,userAlias);
@@ -63,7 +64,10 @@ public class HandleFriendStatusServlet extends HttpServlet {
                 }else
                     url = "/sendRequestSuccess.jsp";
             }      
-            
+        }
+        else{
+            url = "/error_page.jsp";
+        }
         } catch (ClassNotFoundException | SQLException e) {
             request.setAttribute("exception", e);
             url = "/PatientSearchError.jsp";

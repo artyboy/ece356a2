@@ -37,6 +37,7 @@ public class UserDataServlet extends HttpServlet {
             throws ServletException, IOException, ClassNotFoundException, SQLException, NamingException {
        try{
         UserData ud = new UserData();
+        if(request.getParameter("alias") != null){
         ud.alias = request.getParameter("alias");
         ud.password = request.getParameter("password");
         HttpSession session = request.getSession(true);
@@ -53,7 +54,9 @@ public class UserDataServlet extends HttpServlet {
             session.invalidate();
             getServletContext().getRequestDispatcher("/user_data_failed.jsp").forward(request, response);
         }
-        
+        }else{
+            getServletContext().getRequestDispatcher("/index.jsp").forward(request, response);
+        }
        }
        
        finally{

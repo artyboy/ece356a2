@@ -37,36 +37,67 @@ public class QueryServlet extends HttpServlet {
         HttpSession session = request.getSession(true);
         String userAlias = ((UserData)session.getAttribute("userData")).getAlias();
         String url;
+        String doctorAlias = request.getParameter("docAlias");
         try {
             if (intQueryNum == 1) {
                 querydoctorhelper(request, response,userAlias);
                 url = "/success.jsp";
             } 
             else if(intQueryNum == 2){
+                if(doctorAlias == null){
+                    url="/error_page.jsp";
+                }else{
                 viewprofilehelper(request, response);
                 url = "/view_profile.jsp";
+                }
             }
             else if(intQueryNum == 3){
-                String doctorAlias = request.getParameter("docAlias");
-                request.setAttribute("docAlias", doctorAlias);
-                url = "/write_review.jsp";
+                if(doctorAlias == null){
+                    url= "/error_page.jsp";
+                }
+                else{
+                    request.setAttribute("docAlias", doctorAlias);
+                    url = "/write_review.jsp";
+                }
             }
             else if(intQueryNum == 4){
-                writereviewhelper(request,response,userAlias);
-                viewprofilehelper(request,response);
-                url = "/view_profile.jsp";
+                Boolean flag= (Boolean)session.getAttribute("isDoctor") ;
+                
+                if(!(Boolean)session.getAttribute("isDoctor") && request.getParameter("docAlias") != null){
+                    writereviewhelper(request,response,userAlias);
+                    viewprofilehelper(request,response);
+
+                    url = "/view_profile.jsp";
+                }
+                else{
+                    url = "/error_page.jsp";
+                }
             }
             else if(intQueryNum == 5){
-                viewreviewhelper(request,response);
-                url = "/view_review.jsp";
+                if(doctorAlias != null){
+                    viewreviewhelper(request,response);
+                    url = "/view_review.jsp";
+                }else
+                {
+                    url = "/error_page.jsp";
+                }
             }
             else if(intQueryNum == 6){
-                viewnextreviewhelper(request,response, true);
-                url = "/view_review.jsp";
+                if(doctorAlias != null){
+                    viewnextreviewhelper(request,response, true);
+                    url = "/view_review.jsp";
+                }
+                else{
+                     url = "/error_page.jsp";
+                }
             }
             else if(intQueryNum == 7){
+                if(doctorAlias != null){
                 viewnextreviewhelper(request,response,false);
                 url = "/view_review.jsp";
+                }else{
+                     url = "/error_page.jsp";
+                }
             }
             else {
                 throw new RuntimeException("Invalid query number: " + intQueryNum);

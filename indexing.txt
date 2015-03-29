@@ -1,0 +1,38 @@
+explain select Doctor.doc_alias,avg(rating) as avg_srate
+			from Doctor natural join Review 
+			where Doctor.doc_alias=Review.doc_alias 
+			group by Doctor.doc_alias;
+
++----+-------------+--------+--------+-----------------------+---------+--------
+-+-----------------------------------+------+---------------------------------+
+| id | select_type | table  | type   | possible_keys         | key     | key_len
+ | ref                               | rows | Extra                           |
++----+-------------+--------+--------+-----------------------+---------+--------
+-+-----------------------------------+------+---------------------------------+
+|  1 | SIMPLE      | Review | ALL    | fk_Review_Doctor1_idx | NULL    | NULL
+ | NULL                              |    3 | Using temporary; Using filesort |
+|  1 | SIMPLE      | Doctor | eq_ref | PRIMARY               | PRIMARY | 47
+ | ece356db_nhleung.Review.doc_alias |    1 | Using index                     |
++----+-------------+--------+--------+-----------------------+---------+--------
+-+-----------------------------------+------+---------------------------------+
+
+
+explain select Doctor.doc_alias from Doctor natural join DoctorAddress na
+tural join DoctorSpecialization where TRUE and (YEAR(CURDATE())-Doctor.license_y
+ear)>=3 GROUP BY Doctor.doc_alias;
+
++----+-------------+----------------------+-------+-----------------------------
+-----------------+---------+---------+------------------------------------------
++------+--------------------------+
+|  1 | SIMPLE      | Doctor               | index | PRIMARY
+                 | PRIMARY | 47      | NULL
+|    5 | Using where              |
+|  1 | SIMPLE      | DoctorAddress        | ref   | PRIMARY,fk_Doctor Addresses_
+Doctor1_idx      | PRIMARY | 47      | ece356db_nhleung.Doctor.doc_alias
+|    1 | Using index              |
+|  1 | SIMPLE      | DoctorSpecialization | ref   | PRIMARY,fk_Doctor Specializa
+tion_Doctor1_idx | PRIMARY | 47      | ece356db_nhleung.DoctorAddress.doc_alias
+|    1 | Using where; Using index |
++----+-------------+----------------------+-------+-----------------------------
+-----------------+---------+---------+------------------------------------------
++------+--------------------------+

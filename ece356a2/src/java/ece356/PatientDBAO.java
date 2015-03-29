@@ -74,31 +74,34 @@ public class PatientDBAO {
             String sql = "SELECT * FROM Patients WHERE TRUE ";  
             String patientAlias = request.getParameter("Palias");
             if(patientAlias == null){
-                patientAlias = (((Patient)session.getAttribute("patientQuery")).getPatientAlias()!= null) ? 
+                patientAlias = (((Patient)session.getAttribute("patientQuery"))!= null) ? 
                         ((Patient)session.getAttribute("patientQuery")).getPatientAlias(): "" ;
+            }else{
+                savedQuery.setPatientAlias(patientAlias);
             }
             if(patientAlias.length()!=0){
                 sql+="AND pat_alias = ? ";
-                savedQuery.setPatientAlias(patientAlias);
             }
             String patientProvince = request.getParameter("Pprovince");
             
             if(patientProvince == null){
-                patientProvince = (((Patient)session.getAttribute("patientQuery")).getProvince() != null) ? 
+                patientProvince = (((Patient)session.getAttribute("patientQuery")) != null) ? 
                         ((Patient)session.getAttribute("patientQuery")).getProvince(): "" ;
+            }else{
+                savedQuery.setProvince(patientProvince);
             }
             if(patientProvince.length()!=0 && !"Black".equals(patientProvince)){
                 sql+="AND province = ? ";
-                savedQuery.setProvince(patientProvince);
             }
             String city = request.getParameter("Pcity");
             if(city == null){
-                city = (((Patient)session.getAttribute("patientQuery")).getCity()!= null) ? 
+                city = (((Patient)session.getAttribute("patientQuery"))!= null) ? 
                         ((Patient)session.getAttribute("patientQuery")).getCity(): "" ;
+            }else{
+                savedQuery.setCity(city);
             }
             if(city.length() != 0){
                 sql+="AND city = ? ";
-                savedQuery.setCity(city);
             }
             session.setAttribute("patientQuery",savedQuery);
              sql += "AND pat_alias != ?";
